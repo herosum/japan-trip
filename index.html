@@ -1,0 +1,195 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2821
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 <!DOCTYPE html>\
+<html lang="zh-Hant">\
+<head>\
+    <meta charset="UTF-8">\
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">\
+    <title>\uc0\u26085 \u26412 \u34892 \u35352 \u24115 </title>\
+    \
+    <meta name="apple-mobile-web-app-capable" content="yes">\
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">\
+    <meta name="apple-mobile-web-app-title" content="\uc0\u26085 \u26412 \u35352 \u24115 ">\
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/197/197604.png">\
+    \
+    <script src="https://cdn.tailwindcss.com"></script>\
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">\
+    \
+    <style>\
+        body \{ \
+            background-color: #F2F4F7; \
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;\
+            -webkit-tap-highlight-color: transparent;\
+        \}\
+        .safe-area-inset \{ padding-bottom: env(safe-area-inset-bottom); \}\
+        input, select \{ font-size: 16px !important; \} /* \uc0\u38450 \u27490  iOS \u33258 \u21205 \u25918 \u22823  */\
+    </style>\
+</head>\
+<body class="flex justify-center min-h-screen">\
+\
+    <div class="w-full max-w-md bg-white min-h-screen shadow-2xl flex flex-col relative">\
+        \
+        <div class="p-6 pt-10 flex justify-between items-center">\
+            <div class="flex items-center gap-2">\
+                <span class="text-2xl">\uc0\u55356 \u56815 \u55356 \u56821 </span>\
+                <h1 class="font-black text-xl tracking-tight">JAPAN TRIP</h1>\
+            </div>\
+            <div class="text-right">\
+                <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Rate (1k JPY)</p>\
+                <div class="flex items-center text-blue-600 font-bold">\
+                    <span class="text-xs">HK$</span>\
+                    <input type="number" id="rateInput" value="51.5" step="0.1" class="w-10 ml-1 bg-transparent focus:outline-none text-right">\
+                </div>\
+            </div>\
+        </div>\
+\
+        <div class="px-6 mb-4">\
+            <div class="bg-gray-50 rounded-[2rem] p-6 text-center border border-gray-100">\
+                <p class="text-xs text-gray-400 mb-1 uppercase tracking-widest font-bold">Amount in JPY</p>\
+                <div class="flex items-center justify-center gap-1">\
+                    <span class="text-2xl font-light text-gray-400">\'a5</span>\
+                    <input type="number" id="amountInput" placeholder="0" \
+                           class="bg-transparent border-none text-5xl font-black text-gray-800 w-full max-w-[200px] text-center focus:ring-0 outline-none">\
+                </div>\
+                <p id="hkdPreview" class="text-sm text-blue-500 font-medium mt-2">\uc0\u8776  HK$ 0.0</p>\
+            </div>\
+        </div>\
+\
+        <div class="px-6 space-y-3">\
+            <input type="text" id="descInput" placeholder="\uc0\u22312 \u21738 \u35041 \u33457 \u20102 \u36889 \u31558 \u37666 \u65311 " \
+                   class="w-full bg-gray-50 border border-gray-100 rounded-2xl py-4 px-5 text-gray-700 outline-none focus:bg-white focus:border-blue-200 transition-all">\
+            \
+            <div class="flex gap-2">\
+                <select id="categoryInput" class="flex-1 bg-gray-50 border border-gray-100 rounded-2xl py-4 px-4 text-gray-700 outline-none appearance-none">\
+                    <option value="utensils">\uc0\u55356 \u57204  \u24517 \u21507 \u32654 \u39135 </option>\
+                    <option value="train">\uc0\u55357 \u56963  \u20132 \u36890 \u31080 \u21048 </option>\
+                    <option value="shopping-bag">\uc0\u55357 \u57037 \u65039  \u34277 \u22941 \u36092 \u29289 </option>\
+                    <option value="hotel">\uc0\u55356 \u57320  \u20303 \u23487 \u39151 \u24215 </option>\
+                    <option value="camera">\uc0\u55357 \u56568  \u26223 \u40670 \u38272 \u31080 </option>\
+                </select>\
+                <select id="methodInput" class="flex-1 bg-gray-50 border border-gray-100 rounded-2xl py-4 px-4 text-gray-700 outline-none appearance-none">\
+                    <option value="Cash">\uc0\u55357 \u56501  \u29694 \u37329 \u26085 \u22291 </option>\
+                    <option value="Visa">\uc0\u55357 \u56499  \u20449 \u29992 \u21345 </option>\
+                    <option value="Suica">\uc0\u55357 \u56359  Suica/IC</option>\
+                </select>\
+            </div>\
+\
+            <button onclick="addRecord()" class="w-full bg-gray-900 hover:bg-black text-white font-bold py-5 rounded-2xl transition-all active:scale-95 shadow-lg shadow-gray-200">\
+                \uc0\u35352 \u37636 \u25903 \u20986 \
+            </button>\
+        </div>\
+\
+        <div class="px-6 mt-10 pb-20 flex-grow">\
+            <div class="flex justify-between items-center mb-6">\
+                <h2 class="font-black text-gray-800">HISTORY</h2>\
+                <button onclick="clearAll()" class="text-gray-300 text-[10px] font-bold tracking-widest hover:text-red-400">RESET</button>\
+            </div>\
+\
+            <div id="recordList" class="space-y-3 text-sm">\
+                </div>\
+        </div>\
+\
+        <div class="sticky bottom-0 bg-white/80 backdrop-blur-md border-t border-gray-100 p-6 flex justify-between items-center safe-area-inset">\
+            <div>\
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Total Spent</p>\
+                <p id="totalJPY" class="font-black text-xl text-gray-800">\'a5 0</p>\
+            </div>\
+            <div class="text-right">\
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Approx HKD</p>\
+                <p id="totalHKD" class="font-black text-xl text-blue-600">HK$ 0</p>\
+            </div>\
+        </div>\
+    </div>\
+\
+    <script>\
+        let records = JSON.parse(localStorage.getItem('jp_trip_data')) || [];\
+\
+        function updateTotals() \{\
+            const rate = parseFloat(document.getElementById('rateInput').value) / 1000;\
+            const totalJpy = records.reduce((sum, r) => sum + Number(r.amount), 0);\
+            document.getElementById('totalJPY').innerText = `\'a5 $\{totalJpy.toLocaleString()\}`;\
+            document.getElementById('totalHKD').innerText = `HK$ $\{(totalJpy * rate).toFixed(0)\}`;\
+        \}\
+\
+        function render() \{\
+            const list = document.getElementById('recordList');\
+            const rate = parseFloat(document.getElementById('rateInput').value) / 1000;\
+            list.innerHTML = '';\
+\
+            records.slice().reverse().forEach((item, index) => \{\
+                const realIndex = records.length - 1 - index;\
+                list.innerHTML += `\
+                    <div class="flex justify-between items-center p-1 group">\
+                        <div class="flex items-center gap-3">\
+                            <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 text-lg">\
+                                <i class="fas fa-$\{item.icon\}"></i>\
+                            </div>\
+                            <div>\
+                                <p class="font-bold text-gray-700">$\{item.desc || '\uc0\u26410 \u21629 \u21517 '\}</p>\
+                                <p class="text-[10px] text-gray-300 uppercase">$\{item.time\} \'b7 $\{item.method\}</p>\
+                            </div>\
+                        </div>\
+                        <div class="flex items-center gap-3">\
+                            <div class="text-right">\
+                                <p class="font-bold text-gray-800">\'a5$\{Number(item.amount).toLocaleString()\}</p>\
+                                <p class="text-[10px] text-gray-300">HK$$\{(item.amount * rate).toFixed(1)\}</p>\
+                            </div>\
+                            <button onclick="deleteItem($\{realIndex\})" class="text-gray-100 group-hover:text-red-300 transition-colors">\
+                                <i class="fas fa-times-circle"></i>\
+                            </button>\
+                        </div>\
+                    </div>\
+                `;\
+            \});\
+            updateTotals();\
+        \}\
+\
+        document.getElementById('amountInput').addEventListener('input', (e) => \{\
+            const rate = parseFloat(document.getElementById('rateInput').value) / 1000;\
+            document.getElementById('hkdPreview').innerText = `\uc0\u8776  HK$ $\{(e.target.value * rate).toFixed(1)\}`;\
+        \});\
+\
+        function addRecord() \{\
+            const amount = document.getElementById('amountInput').value;\
+            const desc = document.getElementById('descInput').value;\
+            const icon = document.getElementById('categoryInput').value;\
+            const method = document.getElementById('methodInput').value;\
+            \
+            if (!amount || amount <= 0) return;\
+\
+            const now = new Date();\
+            const timeStr = `$\{now.getMonth()+1\}/$\{now.getDate()\} $\{now.getHours()\}:$\{String(now.getMinutes()).padStart(2, '0')\}`;\
+\
+            records.push(\{ amount, desc, icon, method, time: timeStr \});\
+            localStorage.setItem('jp_trip_data', JSON.stringify(records));\
+            \
+            document.getElementById('amountInput').value = '';\
+            document.getElementById('descInput').value = '';\
+            document.getElementById('hkdPreview').innerText = '\uc0\u8776  HK$ 0.0';\
+            render();\
+        \}\
+\
+        function deleteItem(i) \{\
+            records.splice(i, 1);\
+            localStorage.setItem('jp_trip_data', JSON.stringify(records));\
+            render();\
+        \}\
+\
+        function clearAll() \{\
+            if(confirm('\uc0\u30906 \u23450 \u35201 \u28165 \u31354 \u21966 \u65311 ')) \{\
+                records = [];\
+                localStorage.removeItem('jp_trip_data');\
+                render();\
+            \}\
+        \}\
+\
+        document.getElementById('rateInput').addEventListener('input', render);\
+        render();\
+    </script>\
+</body>\
+</html>}
