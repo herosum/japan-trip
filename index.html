@@ -37,7 +37,7 @@
                 <input type="number" id="amountInput" placeholder="金額" class="bg-transparent text-2xl font-black w-full outline-none">
                 <div class="text-right border-l pl-3 ml-2">
                     <p class="text-[9px] text-gray-400 font-bold">1k JPY=</p>
-                    <input type="number" id="rateInput" value="51.5" step="0.1" class="w-8 text-xs font-bold text-blue-500 bg-transparent outline-none">
+                    <input type="number" id="rateInput" value="50" step="0.1" class="w-8 text-xs font-bold text-blue-500 bg-transparent outline-none">
                 </div>
             </div>
             
@@ -54,14 +54,17 @@
                 <select id="methodInput" class="flex-1 bg-gray-50 border border-gray-100 rounded-2xl py-4 px-3 text-sm outline-none appearance-none">
                     <option value="💵 現金">💵 現金日圓</option>
                     <option value="💳 信用卡">💳 信用卡</option>
-                    <option value="🅿️ Paypay">🅿️ Paypay</option>
-                    <option value="🅰️ Alipay">🅰️ Alipay</option>
                     <option value="🐧 Suica">🐧 Suica/IC</option>
+                    <option value="P Paypay">P Paypay</option>
+                    <option value="Alipay">Alipay</option>
                 </select>
             </div>
 
-            <button onclick="addRecord()" class="w-full bg-gray-900 text-white font-bold rounded-2xl py-5 active:scale-95 transition-all shadow-lg">
+            <button id="submitBtn" onclick="handleSave()" class="w-full bg-gray-900 text-white font-bold rounded-2xl py-5 active:scale-95 transition-all shadow-lg">
                 儲存紀錄
+            </button>
+            <button id="cancelEditBtn" onclick="cancelEdit()" class="w-full bg-gray-100 text-gray-500 font-medium rounded-2xl py-2 text-xs hidden">
+                取消編輯
             </button>
         </div>
 
@@ -87,6 +90,7 @@
 
     <script>
         let records = JSON.parse(localStorage.getItem('jp_trip_data')) || [];
+        let editIndex = null; // 用來追蹤目前正在編輯哪一筆紀錄
         const catMap = { utensils: "美食", train: "交通", "shopping-bag": "購物", hotel: "住宿", ticket: "景點" };
 
         function updateStats() {
@@ -110,8 +114,12 @@
             records.slice().reverse().forEach((item, index) => {
                 const realIndex = records.length - 1 - index;
                 totalJpy += Number(item.amount);
+                
+                // 檢查是否正在編輯此列，如果是就加個高亮邊框
+                const isEditing = editIndex === realIndex ? 'border-blue-500 ring-2 ring-blue-100' : 'border-gray-100';
+
                 list.innerHTML += `
-                    <div class="flex justify-between items-center bg-white border border-gray-100 p-4 rounded-2xl shadow-sm text-sm">
+                    <div class="flex justify-between items-center bg-white border ${isEditing} p-4 rounded-2xl shadow-sm text-sm">
                         <div class="flex items-center gap-3">
                             <i class="fas fa-${item.icon} text-gray-300"></i>
                             <div>
@@ -119,9 +127,19 @@
                                 <p class="text-[9px] text-gray-400 uppercase">${item.time} · <span class="text-blue-400">${item.method}</span></p>
                             </div>
                         </div>
-                        <div class="text-right">
-                            <p class="font-bold text-gray-800">¥${Number(item.amount).toLocaleString()}</p>
-                            <p class="text-[9px] text-gray-300">HK$${(item.amount * rate).toFixed(0)}</p>
+                        <div class="flex items-center gap-3 text-right">
+                            <div>
+                                <p class="font-bold text-gray-800">¥${Number(item.amount).toLocaleString()}</p>
+                                <p class="text-[9px] text-gray-300">HK$${(item.amount * rate).toFixed(0)}</p>
+                            </div>
+                            <div class="flex gap-2 ml-2">
+                                <button onclick="startEdit(${realIndex})" class="text-gray-300 hover:text-blue-500 transition-colors">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="deleteItem(${realIndex})" class="text-gray-200 hover:text-red-400 transition-colors">
+                                    <i class="fas fa-minus-circle"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>`;
             });
@@ -130,23 +148,113 @@
             updateStats();
         }
 
-        function addRecord() {
-            const amount = document.getElementById('amountInput').value;
-            const desc = document.getElementById('descInput').value;
-            const icon = document.getElementById('categoryInput').value;
-            const method = document.getElementById('methodInput').value; // 抓取支付方式
-            if (!amount) return;
-            const now = new Date();
-            const timeStr = `${now.getMonth()+1}/${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
-            records.push({ amount, desc, icon, time: timeStr, method: method });
-            localStorage.setItem('jp_trip_data', JSON.stringify(records));
-            document.getElementById('amountInput').value = '';
-            document.getElementById('descInput').value = '';
+        // 觸發編輯模式
+        function startEdit(index) {
+            editIndex = index;
+            const item = records[index];
+            
+            // 將原有數據填回輸入框
+            document.getElementById('amountInput').value = item.amount;
+            document.getElementById('descInput').value = item.desc;
+            document.getElementById('categoryInput').value = item.icon;
+            document.getElementById('methodInput').value = item.method;
+
+            // 改變主按鈕外觀與文字
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerText = "更新紀錄";
+            submitBtn.className = "w-full bg-blue-600 text-white font-bold rounded-2xl py-5 active:scale-95 transition-all shadow-lg";
+            
+            // 顯示取消編輯按鈕
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+            
+            // 滾動回頂部方便編輯
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             render();
         }
 
-        function clearAll() { if(confirm('確定清空？')) { records = []; localStorage.removeItem('jp_trip_data'); render(); } }
-        function exportToCSV() { /* 同前版本導出功能 */ }
+        // 取消編輯
+        function cancelEdit() {
+            editIndex = null;
+            document.getElementById('amountInput').value = '';
+            document.getElementById('descInput').value = '';
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerText = "儲存紀錄";
+            submitBtn.className = "w-full bg-gray-900 text-white font-bold rounded-2xl py-5 active:scale-95 transition-all shadow-lg";
+            
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+            render();
+        }
+
+        // 分流：處理儲存新紀錄或更新舊紀錄
+        function handleSave() {
+            const amount = document.getElementById('amountInput').value;
+            const desc = document.getElementById('descInput').value;
+            const icon = document.getElementById('categoryInput').value;
+            const method = document.getElementById('methodInput').value;
+            
+            if (!amount || amount <= 0) return alert('請輸入有效金額');
+
+            if (editIndex !== null) {
+                // 編輯模式：更新原有陣列位置的資料，保留原本的時間
+                records[editIndex].amount = amount;
+                records[editIndex].desc = desc;
+                records[editIndex].icon = icon;
+                records[editIndex].method = method;
+                editIndex = null; // 重設編輯狀態
+            } else {
+                // 正常模式：新增紀錄
+                const now = new Date();
+                const timeStr = `${now.getMonth()+1}/${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+                records.push({ amount, desc, icon, time: timeStr, method: method });
+            }
+
+            localStorage.setItem('jp_trip_data', JSON.stringify(records));
+            
+            // 重設輸入框與按鈕
+            document.getElementById('amountInput').value = '';
+            document.getElementById('descInput').value = '';
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerText = "儲存紀錄";
+            submitBtn.className = "w-full bg-gray-900 text-white font-bold rounded-2xl py-5 active:scale-95 transition-all shadow-lg";
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+            
+            render();
+        }
+
+        function deleteItem(i) {
+            if(confirm('確定要刪除這筆紀錄嗎？')) { 
+                if (editIndex === i) cancelEdit(); // 如果正在編輯的項目被刪除，先取消編輯
+                records.splice(i, 1); 
+                localStorage.setItem('jp_trip_data', JSON.stringify(records)); 
+                render(); 
+            }
+        }
+
+        function clearAll() { 
+            if(confirm('⚠️ 警告：確定要清空所有支出記錄嗎？此操作無法還原。')) { 
+                records = []; 
+                localStorage.removeItem('jp_trip_data'); 
+                cancelEdit();
+                render(); 
+            } 
+        }
+
+        function exportToCSV() {
+            if (records.length === 0) return alert('沒有紀錄可以導出');
+            const rate = parseFloat(document.getElementById('rateInput').value) / 1000;
+            let csv = "\uFEFF日期,描述,類別,支付方式,日圓(JPY),港幣(HKD)\n";
+            records.forEach(r => {
+                csv += `${r.time},${r.desc},${catMap[r.icon] || '其他'},${r.method},${r.amount},${(r.amount * rate).toFixed(1)}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `日本旅行支出報告.csv`;
+            link.click();
+        }
+
         document.getElementById('rateInput').addEventListener('input', render);
         render();
     </script>
